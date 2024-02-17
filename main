@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MenuApp());
+}
+
+class MenuItem {
+  final String name;
+  final String imagePath;
+
+  MenuItem(this.name, this.imagePath);
+}
+
+class MenuApp extends StatefulWidget {
+  @override
+  _MenuAppState createState() => _MenuAppState();
+}
+
+class _MenuAppState extends State<MenuApp> {
+  MenuItem? _selectedItem;
+  final List<MenuItem> _menuItems = [
+    MenuItem("Pizza", "assets/pizza.jpg"),
+    MenuItem("Hamburgesa", "assets/burger.jpg"),
+    MenuItem("Nieve", "assets/ice_cream.jpg"),
+    MenuItem("Café", "assets/coffee.jpg"),
+    MenuItem("Tacos", "assets/taco.jpg")
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Menu"),
+        ),
+        body: ListView.builder(
+          itemCount: _menuItems.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(_menuItems[index].name),
+              leading: Image.asset(
+                _menuItems[index].imagePath,
+                width: 50,
+                height: 50,
+              ),
+              selected: _selectedItem == _menuItems[index],
+              onTap: () {
+                setState(() {
+                  _selectedItem = _selectedItem == _menuItems[index]
+                      ? null
+                      : _menuItems[index];
+                });
+              },
+            );
+          },
+        ),
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  _showAlertDialog("Pick up");
+                },
+                child: Text("Pick up"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _showAlertDialog("Delivery");
+                },
+                child: Text("Delivery"),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showAlertDialog(String title) {
+    String content;
+    if (_selectedItem != null) {
+      content = _selectedItem!.name;
+    } else {
+      content = "Seleccione un platillo";
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
